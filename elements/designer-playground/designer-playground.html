@@ -20,6 +20,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../designer-document-outline/designer-document-outline.html">
 <link rel="import" href="../designer-inspector/designer-inspector.html">
 <link rel="import" href="../designer-mini-nav/designer-mini-nav.html">
+<link rel="import" href="../designer-logic-editor/designer-logic-editor.html">
 <link rel="import" href="../designer-stage/designer-stage.html">
 <link rel="import" href="../designer-tree/designer-tree.html">
 <link rel="import" href="../paper-tabs-vertical/paper-tabs-vertical.html">
@@ -64,6 +65,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       display: flex;
       flex-direction: row;
       flex: 1 1 0;
+    }
+    designer-logic-editor {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
     }
     core-toolbar {
       background: #424242;
@@ -117,10 +123,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
     #doc-view {
       display: flex;
-      flex-direction: column;
       flex: 1;
+      flex-direction: column;
     }
     designer-stage {
+      flex: 1;
+    }
+    #doc-view > designer-stage {
       flex: 1;
     }
     #html {
@@ -201,38 +210,49 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div id="main">
       <core-toolbar class="core-header">
         <span>[[filename]]</span>
+        <paper-tabs selected="{{_selectedEditor}}" noink>
+          <paper-tab>Storyboard</paper-tab>
+          <paper-tab>Layout</paper-tab>
+          <paper-tab>Logic</paper-tab>
+        </paper-tabs>
       </core-toolbar>
       <!-- <template is="x-if" if="{{domDocument}}">
         <designer-breadcrumb node="{{parent.currentNode}}"></designer-breadcrumb>
       </template> -->
       <designer-breadcrumb node="{{currentNode}}"></designer-breadcrumb>
-      <div id="editor">
-        <div id="doc-view">
-          <designer-document
-              id="document"
-              source="[[documentSource]]"
-              url="[[documentUrl]]"
-              text-content="{{textContent}}"
-              elements="{{elements}}"
-              filename="{{filename}}">
-          </designer-document>
-          <designer-stage
-              id="stage"
-              document="[[document]]"
-              frame="[[frame]]"
-              current-element-info="{{currentElementInfo}}"
-              on-designer-command="_onDesignerCommand">
-            <designer-frame id="frame" document="[[domDocument]]"></designer-frame>
-          </designer-stage>
-          <pre id="html">[[textContent]]</pre>
-        </div> <!-- doc-view -->
-        <template is="x-if" if="{{domDocument}}">
-          <designer-inspector
-              source-document="[[parent.domDocument]]"
-              element-info="{{parent.currentElementInfo}}">
-          </designer-inspector>
-        </template>
-      </div> <!-- editor -->
+      <core-pages id="editor" selected="{{_selectedEditor}}">
+        <div id="storyboard">
+          Storyboard
+        </div>
+        <div id="editor">
+          <div id="doc-view">
+            <designer-document
+                id="document"
+                source="[[documentSource]]"
+                url="[[documentUrl]]"
+                text-content="{{textContent}}"
+                elements="{{elements}}"
+                filename="{{filename}}">
+            </designer-document>
+            <designer-stage
+                id="stage"
+                document="[[document]]"
+                frame="[[frame]]"
+                current-element-info="{{currentElementInfo}}"
+                on-designer-command="_onDesignerCommand">
+              <designer-frame id="frame" document="[[domDocument]]"></designer-frame>
+            </designer-stage>
+            <pre id="html">[[textContent]]</pre>
+          </div> <!-- doc-view -->
+          <template is="x-if" if="{{domDocument}}">
+            <designer-inspector
+                source-document="[[parent.domDocument]]"
+                element-info="{{parent.currentElementInfo}}">
+            </designer-inspector>
+          </template>
+        </div> <!-- editor -->
+        <designer-logic-editor></designer-logic-editor>
+      </core-pages>
     </div> <!-- main -->
   </template>
 
@@ -317,6 +337,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         _selectedNavTab: {
           type: Number,
           value: 0,
+        },
+
+        _selectedEditor: {
+          value: 2,
         },
 
       },
